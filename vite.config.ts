@@ -1,7 +1,6 @@
 import { resolve } from 'node:path'
-import { readFile, writeFile } from 'node:fs/promises'
 import { defineConfig } from 'vite'
-import oxc from 'oxc-transform'
+import { generate } from 'fast-dts'
 import pkg from './package.json'
 
 export default defineConfig({
@@ -16,10 +15,7 @@ export default defineConfig({
     {
       name: 'dts',
       async closeBundle() {
-        const file = pkg.source
-        const text = await readFile(file, 'utf8')
-        const code = oxc.isolatedDeclaration(file, text)
-        await writeFile(pkg.types, code.sourceText)
+        await generate(pkg.source, pkg.types)
       },
     },
   ],
